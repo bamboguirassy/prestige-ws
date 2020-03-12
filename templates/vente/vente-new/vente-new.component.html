@@ -1,0 +1,116 @@
+<div class="card" *ngIf="resourceName|creable">
+    <h1 class="mb-0">Formulaire de création - Vente</h1>
+    <hr class="mb-0">
+    <form #venteForm="ngForm" (ngSubmit)="createItem()">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantInitial">MontantInitial</label>
+                        <input [(ngModel)]="item.montantInitial" type="text" name="montantInitial" id="montantInitial" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantInitialId">
+                        <small id="helpMontantInitialId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantRegle">MontantRegle</label>
+                        <input [(ngModel)]="item.montantRegle" type="text" name="montantRegle" id="montantRegle" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantRegleId">
+                        <small id="helpMontantRegleId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantRestant">MontantRestant</label>
+                        <input [(ngModel)]="item.montantRestant" type="text" name="montantRestant" id="montantRestant" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantRestantId">
+                        <small id="helpMontantRestantId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="dateLivraison">DateLivraison</label>
+                        <input [(ngModel)]="item.dateLivraison" type="text" name="dateLivraison" id="dateLivraison" class="form-control"
+                                    placeholder="" aria-describedby="helpDateLivraisonId">
+                        <small id="helpDateLivraisonId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="adresseLivraison">AdresseLivraison</label>
+                        <input [(ngModel)]="item.adresseLivraison" type="text" name="adresseLivraison" id="adresseLivraison" class="form-control"
+                                    placeholder="" aria-describedby="helpAdresseLivraisonId">
+                        <small id="helpAdresseLivraisonId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="livree">Livree</label>
+                        <input [(ngModel)]="item.livree" type="text" name="livree" id="livree" class="form-control"
+                                    placeholder="" aria-describedby="helpLivreeId">
+                        <small id="helpLivreeId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="regle">Regle</label>
+                        <input [(ngModel)]="item.regle" type="text" name="regle" id="regle" class="form-control"
+                                    placeholder="" aria-describedby="helpRegleId">
+                        <small id="helpRegleId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="dateLivraisonPrevue">DateLivraisonPrevue</label>
+                        <input [(ngModel)]="item.dateLivraisonPrevue" type="text" name="dateLivraisonPrevue" id="dateLivraisonPrevue" class="form-control"
+                                    placeholder="" aria-describedby="helpDateLivraisonPrevueId">
+                        <small id="helpDateLivraisonPrevueId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="dateLivraisonEffective">DateLivraisonEffective</label>
+                        <input [(ngModel)]="item.dateLivraisonEffective" type="text" name="dateLivraisonEffective" id="dateLivraisonEffective" class="form-control"
+                                    placeholder="" aria-describedby="helpDateLivraisonEffectiveId">
+                        <small id="helpDateLivraisonEffectiveId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <input [(ngModel)]="item.type" type="text" name="type" id="type" class="form-control"
+                                    placeholder="" aria-describedby="helpTypeId">
+                        <small id="helpTypeId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input [(ngModel)]="item.date" type="text" name="date" id="date" class="form-control"
+                                    placeholder="" aria-describedby="helpDateId">
+                        <small id="helpDateId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="numeroVente">NumeroVente</label>
+                        <input [(ngModel)]="item.numeroVente" type="text" name="numeroVente" id="numeroVente" class="form-control"
+                                    placeholder="" aria-describedby="helpNumeroVenteId">
+                        <small id="helpNumeroVenteId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|showable" icon="pi pi-plus b" pButton [disabled]="isSubmitted || venteForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Ajouter">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>

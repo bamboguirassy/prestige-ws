@@ -1,0 +1,44 @@
+<div class="card" *ngIf="resourceName|editable">
+    <h1 class="mb-0">Formulaire de Modification - Modele</h1>
+    <hr class="mb-0">
+    <form (ngSubmit)="updateItem()" #modeleForm="ngForm">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input [(ngModel)]="item.nom" type="text" name="nom" id="nom" class="form-control"
+                                    placeholder="" aria-describedby="helpNomId">
+                        <small id="helpNomId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input [(ngModel)]="item.description" type="text" name="description" id="description" class="form-control"
+                                    placeholder="" aria-describedby="helpDescriptionId">
+                        <small id="helpDescriptionId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="photo">Photo</label>
+                        <input [(ngModel)]="item.photo" type="text" name="photo" id="photo" class="form-control"
+                                    placeholder="" aria-describedby="helpPhotoId">
+                        <small id="helpPhotoId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|showable" icon="pi pi-pencil" pButton [disabled]="isSubmitted || modeleForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Mettre à jour">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>

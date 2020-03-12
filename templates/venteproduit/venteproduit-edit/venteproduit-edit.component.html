@@ -1,0 +1,44 @@
+<div class="card" *ngIf="resourceName|editable">
+    <h1 class="mb-0">Formulaire de Modification - VenteProduit</h1>
+    <hr class="mb-0">
+    <form (ngSubmit)="updateItem()" #venteProduitForm="ngForm">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="prixUnitaire">PrixUnitaire</label>
+                        <input [(ngModel)]="item.prixUnitaire" type="text" name="prixUnitaire" id="prixUnitaire" class="form-control"
+                                    placeholder="" aria-describedby="helpPrixUnitaireId">
+                        <small id="helpPrixUnitaireId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="quantite">Quantite</label>
+                        <input [(ngModel)]="item.quantite" type="text" name="quantite" id="quantite" class="form-control"
+                                    placeholder="" aria-describedby="helpQuantiteId">
+                        <small id="helpQuantiteId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantTotal">MontantTotal</label>
+                        <input [(ngModel)]="item.montantTotal" type="text" name="montantTotal" id="montantTotal" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantTotalId">
+                        <small id="helpMontantTotalId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|showable" icon="pi pi-pencil" pButton [disabled]="isSubmitted || venteProduitForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Mettre à jour">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>

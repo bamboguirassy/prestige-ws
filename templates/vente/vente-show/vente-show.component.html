@@ -1,0 +1,78 @@
+<div class="row">
+    <div class="col-sm-9 col-md-10">
+        <p-tabView>
+            <p-tabPanel header="Détails">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p-card [header]="item?.id">
+                            <table class="table table-striped table-responsive table-condensed table-hover">
+                                                                                                                                                                                <tr>
+                                            <th>MontantInitial</th>
+                                            <td>{{ item?.montantInitial }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>MontantRegle</th>
+                                            <td>{{ item?.montantRegle }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>MontantRestant</th>
+                                            <td>{{ item?.montantRestant }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>DateLivraison</th>
+                                            <td>{{ item?.dateLivraison }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>AdresseLivraison</th>
+                                            <td>{{ item?.adresseLivraison }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>Livree</th>
+                                            <td>{{ item?.livree }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>Regle</th>
+                                            <td>{{ item?.regle }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>DateLivraisonPrevue</th>
+                                            <td>{{ item?.dateLivraisonPrevue }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>DateLivraisonEffective</th>
+                                            <td>{{ item?.dateLivraisonEffective }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>Type</th>
+                                            <td>{{ item?.type }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>Date</th>
+                                            <td>{{ item?.date }}</td>
+                                        </tr>
+                                                                                                                                                <tr>
+                                            <th>NumeroVente</th>
+                                            <td>{{ item?.numeroVente }}</td>
+                                        </tr>
+                                                                                                </table>
+                        </p-card>
+                    </div>
+                </div>
+            </p-tabPanel>
+            <p-tabPanel header=".">
+                
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+    <div class="col-sm-3 col-md-2 mt-sm-2">
+        <div class="ui-fluid">
+            <div class="ui-g-12">
+                <button (click)="close()" pButton type="button" label="Fermer" icon="pi pi-times">
+                    </button>
+                <button *ngIf="(resourceName|showable) && !isOffline" (click)="refresh()" pButton type="button" label="Raffraichir"
+                    icon="pi pi-refresh" style="margin-right: 3px; margin-bottom: 0px;"
+                    class="ui-button-raised ui-button-rounded btn-block ui-button-secondary mt-1"></button>
+            </div>
+        </div>
+    </div>
+</div>

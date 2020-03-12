@@ -1,0 +1,84 @@
+<div class="card" *ngIf="resourceName|creable">
+    <h1 class="mb-0">Formulaire de création - Produit</h1>
+    <hr class="mb-0">
+    <form #produitForm="ngForm" (ngSubmit)="createItem()">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input [(ngModel)]="item.nom" type="text" name="nom" id="nom" class="form-control"
+                                    placeholder="" aria-describedby="helpNomId">
+                        <small id="helpNomId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="prixMinimum">PrixMinimum</label>
+                        <input [(ngModel)]="item.prixMinimum" type="text" name="prixMinimum" id="prixMinimum" class="form-control"
+                                    placeholder="" aria-describedby="helpPrixMinimumId">
+                        <small id="helpPrixMinimumId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="prixVariable">PrixVariable</label>
+                        <input [(ngModel)]="item.prixVariable" type="text" name="prixVariable" id="prixVariable" class="form-control"
+                                    placeholder="" aria-describedby="helpPrixVariableId">
+                        <small id="helpPrixVariableId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="quantifiable">Quantifiable</label>
+                        <input [(ngModel)]="item.quantifiable" type="text" name="quantifiable" id="quantifiable" class="form-control"
+                                    placeholder="" aria-describedby="helpQuantifiableId">
+                        <small id="helpQuantifiableId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="quantiteDisponible">QuantiteDisponible</label>
+                        <input [(ngModel)]="item.quantiteDisponible" type="text" name="quantiteDisponible" id="quantiteDisponible" class="form-control"
+                                    placeholder="" aria-describedby="helpQuantiteDisponibleId">
+                        <small id="helpQuantiteDisponibleId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="expose">Expose</label>
+                        <input [(ngModel)]="item.expose" type="text" name="expose" id="expose" class="form-control"
+                                    placeholder="" aria-describedby="helpExposeId">
+                        <small id="helpExposeId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input [(ngModel)]="item.description" type="text" name="description" id="description" class="form-control"
+                                    placeholder="" aria-describedby="helpDescriptionId">
+                        <small id="helpDescriptionId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <input [(ngModel)]="item.type" type="text" name="type" id="type" class="form-control"
+                                    placeholder="" aria-describedby="helpTypeId">
+                        <small id="helpTypeId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|showable" icon="pi pi-plus b" pButton [disabled]="isSubmitted || produitForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Ajouter">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>
