@@ -194,7 +194,8 @@ class GroupController extends AbstractController {
                 new AccessModel('CATEGORIEPRODUIT', "Categorie de Produit"),
                 new AccessModel('ENTREPRISE', "Entreprise"),
                 new AccessModel('CARACTERISTIQUECATEGORIE', "Caracteristique des catégories"),
-                new AccessModel('VALEURCARACTERISTIQUE', "Valeurs des caracteristiques")
+                new AccessModel('VALEURCARACTERISTIQUE', "Valeurs des caracteristiques"),
+                new AccessModel('MOYENPAIEMENT', "Moyens de paiement")
                     ]
             ),
             New AccessGroup("Gestion Vente & Commande", [
@@ -203,6 +204,8 @@ class GroupController extends AbstractController {
                 new AccessModel('VENTE', "Vente"),
                 new AccessModel('COMMANDE', "Commande"),
                 new AccessModel('SERVICEDEMANDE', "Service à la demande"),
+                new AccessModel('REGLEMENT', "Reglement"),
+                new AccessModel('AVOIR', "Avoir"),
                     ])
         ];
         return $accessGroups;

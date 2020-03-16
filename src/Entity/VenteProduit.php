@@ -62,12 +62,12 @@ class VenteProduit
      */
     private $vente;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
 
-    public function getPrixUnitaire(): ?string
+    public function getPrixUnitaire()
     {
         return $this->prixUnitaire;
     }
@@ -79,7 +79,7 @@ class VenteProduit
         return $this;
     }
 
-    public function getQuantite(): ?int
+    public function getQuantite()
     {
         return $this->quantite;
     }
@@ -91,36 +91,36 @@ class VenteProduit
         return $this;
     }
 
-    public function getMontantTotal(): ?string
+    public function getMontantTotal()
     {
         return $this->montantTotal;
     }
 
-    public function setMontantTotal(?string $montantTotal): self
+    public function setMontantTotal($montantTotal): self
     {
         $this->montantTotal = $montantTotal;
 
         return $this;
     }
 
-    public function getProduit(): ?Produit
+    public function getProduit()
     {
         return $this->produit;
     }
 
-    public function setProduit(?Produit $produit): self
+    public function setProduit($produit): self
     {
         $this->produit = $produit;
 
         return $this;
     }
 
-    public function getVente(): ?Vente
+    public function getVente()
     {
         return $this->vente;
     }
 
-    public function setVente(?Vente $vente): self
+    public function setVente($vente): self
     {
         $this->vente = $vente;
 

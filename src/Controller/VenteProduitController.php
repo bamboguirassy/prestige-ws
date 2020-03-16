@@ -13,30 +13,42 @@ use App\Utils\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * @Route("/api/vente/produit")
+ * @Route("/api/venteproduit")
  */
-class VenteProduitController extends AbstractController
-{
+class VenteProduitController extends AbstractController {
+
     /**
      * @Rest\Get(path="/", name="vente_produit_index")
      * @Rest\View(StatusCode = 200)
      * @IsGranted("ROLE_VENTEPRODUIT_INDEX")
      */
-    public function index(): array
-    {
+    public function index(): array {
         $venteProduits = $this->getDoctrine()
-            ->getRepository(VenteProduit::class)
-            ->findAll();
+                ->getRepository(VenteProduit::class)
+                ->findAll();
 
-        return count($venteProduits)?$venteProduits:[];
+        return count($venteProduits) ? $venteProduits : [];
+    }
+    
+    /**
+     * @Rest\Get(path="/{id}/vente", name="vente_produit_by_vente_index")
+     * @Rest\View(StatusCode = 200)
+     * @IsGranted("ROLE_VENTE_SHOW")
+     */
+    public function findByVente(\App\Entity\Vente $vente): array {
+        $venteProduits = $this->getDoctrine()
+                ->getRepository(VenteProduit::class)
+                ->findByVente($vente);
+
+        return count($venteProduits) ? $venteProduits : [];
     }
 
     /**
      * @Rest\Post(Path="/create", name="vente_produit_new")
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_VENTEPRODUIT_CREATE")
+     * @IsGranted("ROLE_VENTE_CREATE")
      */
-    public function create(Request $request): VenteProduit    {
+    public function create(Request $request): VenteProduit {
         $venteProduit = new VenteProduit();
         $form = $this->createForm(VenteProduitType::class, $venteProduit);
         $form->submit(Utils::serializeRequestContent($request));
@@ -49,21 +61,41 @@ class VenteProduitController extends AbstractController
     }
 
     /**
-     * @Rest\Get(path="/{id}", name="vente_produit_show",requirements = {"id"="\d+"})
+     * @Rest\Post(Path="/create-multiple/", name="vente_produit_multiple_new")
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_VENTEPRODUIT_SHOW")
+     * @IsGranted("ROLE_VENTE_CREATE")
      */
-    public function show(VenteProduit $venteProduit): VenteProduit    {
+    public function createMultiple(Request $request): VenteProduit {
+        $entityManager = $this->getDoctrine()->getManager();
+        $produits = Utils::serializeRequestContent($request);
+        foreach ($produits as $produit) {
+            $venteProduit = new VenteProduit();
+            $form = $this->createForm(VenteProduitType::class, $venteProduit);
+            $form->submit($produit);
+            $entityManager->persist($venteProduit);
+        }
+
+
+        $entityManager->flush();
+
         return $venteProduit;
     }
 
-    
+    /**
+     * @Rest\Get(path="/{id}", name="vente_produit_show",requirements = {"id"="\d+"})
+     * @Rest\View(StatusCode=200)
+     * @IsGranted("ROLE_VENTE_SHOW")
+     */
+    public function show(VenteProduit $venteProduit): VenteProduit {
+        return $venteProduit;
+    }
+
     /**
      * @Rest\Put(path="/{id}/edit", name="vente_produit_edit",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_VENTEPRODUIT_EDIT")
+     * @IsGranted("ROLE_VENTE_EDIT")
      */
-    public function edit(Request $request, VenteProduit $venteProduit): VenteProduit    {
+    public function edit(Request $request, VenteProduit $venteProduit): VenteProduit {
         $form = $this->createForm(VenteProduitType::class, $venteProduit);
         $form->submit(Utils::serializeRequestContent($request));
 
@@ -75,20 +107,20 @@ class VenteProduitController extends AbstractController
     /**
      * @Rest\Delete("/{id}", name="vente_produit_delete",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_VENTEPRODUIT_DELETE")
+     * @IsGranted("ROLE_VENTE_DELETE")
      */
-    public function delete(VenteProduit $venteProduit): VenteProduit    {
+    public function delete(VenteProduit $venteProduit): VenteProduit {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($venteProduit);
         $entityManager->flush();
 
         return $venteProduit;
     }
-    
+
     /**
      * @Rest\Post("/delete-selection/", name="vente_produit_selection_delete")
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_VENTEPRODUIT_DELETE")
+     * @IsGranted("ROLE_VENTE_DELETE")
      */
     public function deleteMultiple(Request $request): array {
         $entityManager = $this->getDoctrine()->getManager();
@@ -104,4 +136,5 @@ class VenteProduitController extends AbstractController
 
         return $venteProduits;
     }
+
 }

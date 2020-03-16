@@ -15,19 +15,20 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * @Route("/api/modele")
  */
-class ModeleController extends AbstractController
-{
+class ModeleController extends AbstractController {
+
+    public static $photoDirectory = '/uploads/modeles';
+
     /**
      * @Rest\Get(path="/", name="modele_index")
      * @Rest\View(StatusCode = 200)
      */
-    public function index(): array
-    {
+    public function index(): array {
         $modeles = $this->getDoctrine()
-            ->getRepository(Modele::class)
-            ->findAll();
+                ->getRepository(Modele::class)
+                ->findAll(['nom' => 'asc']);
 
-        return count($modeles)?$modeles:[];
+        return count($modeles) ? $modeles : [];
     }
 
     /**
@@ -35,11 +36,10 @@ class ModeleController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_MODELE_CREATE")
      */
-    public function create(Request $request, \Symfony\Component\DependencyInjection\ContainerInterface  $container): Modele    {
+    public function create(Request $request): Modele {
         $modele = new Modele();
         $form = $this->createForm(ModeleType::class, $modele);
         $form->submit(Utils::serializeRequestContent($request));
-
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($modele);
         $entityManager->flush();
@@ -52,17 +52,16 @@ class ModeleController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_MODELE_SHOW")
      */
-    public function show(Modele $modele): Modele    {
+    public function show(Modele $modele): Modele {
         return $modele;
     }
 
-    
     /**
      * @Rest\Put(path="/{id}/edit", name="modele_edit",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_MODELE_EDIT")
      */
-    public function edit(Request $request, Modele $modele): Modele    {
+    public function edit(Request $request, Modele $modele): Modele {
         $form = $this->createForm(ModeleType::class, $modele);
         $form->submit(Utils::serializeRequestContent($request));
 
@@ -72,35 +71,100 @@ class ModeleController extends AbstractController
     }
 
     /**
+     * @Rest\Post(path="/{id}/photo-upload", name="modele_photo_upload",requirements = {"id"="\d+"})
+     * @Rest\View(StatusCode=200)
+     * @IsGranted("ROLE_MODELE_EDIT")
+     */
+    public function uploadPhoto(Request $request, Modele $modele, \Symfony\Component\DependencyInjection\ContainerInterface $container): Modele {
+        $em = $this->getDoctrine()->getManager();
+        $fullPath = Utils::$serveurUrl . ModeleController::$photoDirectory . '/';
+        //find old photo and delete it if exists
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        if ($modele->getPhoto()) {
+            $path = $container->getParameter('modele_photo_directory') . $modele->getPhoto();
+            try {
+                if ($fileSystem->exists($path)) {
+                    $fileSystem->remove($path);
+                }
+            } catch (IOExceptionInterface $exception) {
+                echo "An error occurred while deleting the file at " . $exception->getPath();
+            }
+        }
+        //manage new file upload
+        $file = NULL;
+        if ($request->files->get('file')) {
+            $file = $request->files->get('file');
+        }
+        if ($file) {
+            $fileName = $modele->getNom() . '.' . $file->guessExtension();
+            // moves the file to the directory where brochures are stored
+            $file->move(
+                    $container->getParameter('modele_photo_directory'), $fileName
+            );
+            $modele->setPhoto($fileName);
+            $modele->setPhotoUrl($fullPath . $fileName);
+            $em->flush();
+        }
+        return $modele;
+    }
+
+    /**
      * @Rest\Delete("/{id}", name="modele_delete",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_MODELE_DELETE")
      */
-    public function delete(Modele $modele): Modele    {
+    public function delete(Modele $modele, \Symfony\Component\DependencyInjection\ContainerInterface $container): Modele {
         $entityManager = $this->getDoctrine()->getManager();
+
+        //find old photo and delete it if exists
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        if ($modele->getPhoto()) {
+            $path = $container->getParameter('modele_photo_directory').'/'. $modele->getPhoto();
+            try {
+                if ($fileSystem->exists($path)) {
+                    $fileSystem->remove($path);
+                }
+            } catch (IOExceptionInterface $exception) {
+                echo "An error occurred while deleting the file at " . $exception->getPath();
+            }
+        }
         $entityManager->remove($modele);
+
         $entityManager->flush();
 
         return $modele;
     }
-    
+
     /**
      * @Rest\Post("/delete-selection/", name="modele_selection_delete")
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_MODELE_DELETE")
      */
-    public function deleteMultiple(Request $request): array {
+    public function deleteMultiple(Request $request, \Symfony\Component\DependencyInjection\ContainerInterface $container): array {
         $entityManager = $this->getDoctrine()->getManager();
         $modeles = Utils::getObjectFromRequest($request);
         if (!count($modeles)) {
             throw $this->createNotFoundException("Selectionner au minimum un élément à supprimer.");
         }
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
         foreach ($modeles as $modele) {
             $modele = $entityManager->getRepository(Modele::class)->find($modele->id);
+            //find old photo and delete it if exists
+            if ($modele->getPhoto()) {
+                $path = $container->getParameter('modele_photo_directory') . $modele->getPhoto();
+                try {
+                    if ($fileSystem->exists($path)) {
+                        $fileSystem->remove($path);
+                    }
+                } catch (IOExceptionInterface $exception) {
+                    echo "An error occurred while deleting the file at " . $exception->getPath();
+                }
+            }
             $entityManager->remove($modele);
         }
         $entityManager->flush();
 
         return $modeles;
     }
+
 }

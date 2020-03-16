@@ -89,15 +89,6 @@ class Produit
      */
     private $entreprise;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\CategorieProduit")
-     * @ORM\JoinTable(name="produit_categorise",
-     *      joinColumns={@ORM\JoinColumn(name="produit", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="categorie_produit", referencedColumnName="id")}
-     * )
-     */
-    private $categories;
-
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -215,32 +206,4 @@ class Produit
 
         return $this;
     }
-
-    /**
-     * @return Collection|CategorieProduit[]
-     */
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    public function addCategory(CategorieProduit $category): self
-    {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(CategorieProduit $category): self
-    {
-        if ($this->categories->contains($category)) {
-            $this->categories->removeElement($category);
-        }
-
-        return $this;
-    }
-
-
 }

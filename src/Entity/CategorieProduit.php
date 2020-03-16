@@ -36,6 +36,13 @@ class CategorieProduit
      * @ORM\Column(name="photo", type="string", length=245, nullable=true)
      */
     private $photo;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="photo_url", type="string", length=45, nullable=false)
+     */
+    private $photoUrl;
 
     /**
      * @var string|null
@@ -202,6 +209,18 @@ class CategorieProduit
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPhotoUrl()
+    {
+        return $this->photoUrl;
+    }
+
+    public function setPhotoUrl(string $photoUrl): self
+    {
+        $this->photoUrl = $photoUrl;
 
         return $this;
     }

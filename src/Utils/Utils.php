@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
  * @author bambo
  */
 class Utils {
+    
+    public static $serveurUrl = 'http://127.0.0.1:8000';
+    //public static $serveurUrl = 'https://prestige-ws.bambocloud.com';
 
     public static function serializeRequestContent(Request $request) {
         return json_decode($request->getContent(), true);

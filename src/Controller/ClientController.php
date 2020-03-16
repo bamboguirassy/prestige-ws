@@ -34,10 +34,27 @@ class ClientController extends AbstractController {
 
         return count($clients) ? $clients : [];
     }
+    
+    /**
+     * @Rest\Get(path="/dette-client/{id}", name="dette_client_index")
+     * @Rest\View(StatusCode = 200)
+     * @IsGranted("ROLE_CLIENT_SHOW")
+     */
+    public function detteClient(Client $client) {
+        $em = $this->getDoctrine()
+                ->getManager();
+        $dette=$em->createQuery('select sum(v.montantRestant) from App\Entity\Vente v '
+                . 'where v.client=?1 and v.entreprise=?2 and v.regle<>?3')
+                ->setParameter(1,$client)
+                ->setParameter(2, $this->getUser()->getEntreprise())
+                ->setParameter(3,1)
+                ->getSingleScalarResult();
+        return $dette;
+    }
 
     /**
      * @Rest\Get(path="/search/{tel}", name="client_search")
-     * @IsGranted("ROLE_CLIENT_INDEX")
+     * @IsGranted("ROLE_CLIENT_SHOW")
      * @Rest\View(StatusCode = 200)
      */
     public function searchClient($tel): array {

@@ -1,0 +1,68 @@
+<div class="card" *ngIf="resourceName|editable">
+    <h1 class="mb-0">Formulaire de Modification - Reglement</h1>
+    <hr class="mb-0">
+    <form (ngSubmit)="updateItem()" #reglementForm="ngForm">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montant">Montant</label>
+                        <input [(ngModel)]="item.montant" type="text" name="montant" id="montant" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantId">
+                        <small id="helpMontantId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input [(ngModel)]="item.date" type="text" name="date" id="date" class="form-control"
+                                    placeholder="" aria-describedby="helpDateId">
+                        <small id="helpDateId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantRestant">MontantRestant</label>
+                        <input [(ngModel)]="item.montantRestant" type="text" name="montantRestant" id="montantRestant" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantRestantId">
+                        <small id="helpMontantRestantId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="commande">Commande</label>
+                        <input [(ngModel)]="item.commande" type="text" name="commande" id="commande" class="form-control"
+                                    placeholder="" aria-describedby="helpCommandeId">
+                        <small id="helpCommandeId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantDonne">MontantDonne</label>
+                        <input [(ngModel)]="item.montantDonne" type="text" name="montantDonne" id="montantDonne" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantDonneId">
+                        <small id="helpMontantDonneId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="montantRetourne">MontantRetourne</label>
+                        <input [(ngModel)]="item.montantRetourne" type="text" name="montantRetourne" id="montantRetourne" class="form-control"
+                                    placeholder="" aria-describedby="helpMontantRetourneId">
+                        <small id="helpMontantRetourneId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|editable" icon="pi pi-pencil" pButton [disabled]="isSubmitted || reglementForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Mettre à jour">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>

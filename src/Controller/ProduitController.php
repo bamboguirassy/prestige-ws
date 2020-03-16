@@ -17,6 +17,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class ProduitController extends AbstractController {
 
+    public static $photoDirectory = '/uploads/produits';
+
     /**
      * @Rest\Get(path="/", name="produit_index")
      * @Rest\View(StatusCode = 200)
@@ -48,7 +50,7 @@ class ProduitController extends AbstractController {
             $produits = $this->getDoctrine()->getManager()
                     ->createQuery('select p from App\Entity\Produit p '
                             . 'where p.nom like ?1 and p.type=?2')
-                    ->setParameter(1, '%'.$name.'%')
+                    ->setParameter(1, '%' . $name . '%')
                     ->setParameter(2, 'produit')
                     ->getResult();
         } else {
@@ -90,8 +92,53 @@ class ProduitController extends AbstractController {
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($produit);
+
+        $produitData = json_decode($request->getContent());
+        if (isset($produitData->categories)) {
+            $categories = $produitData->categories;
+            foreach ($categories as $categorieId) {
+                $categorie = $entityManager->getRepository(\App\Entity\CategorieProduit::class)
+                        ->find($categorieId);
+                $produitCategorise = new \App\Entity\ProduitCategorise();
+                $produitCategorise->setCategorieProduit($categorie);
+                $produitCategorise->setProduit($produit);
+                $entityManager->persist($produitCategorise);
+            }
+        }
+
         $entityManager->flush();
 
+        return $produit;
+    }
+
+    /**
+     * @Rest\Post(path="/{id}/photo-upload", name="produit_photo_upload",requirements = {"id"="\d+"})
+     * @Rest\View(StatusCode=200)
+     * @IsGranted("ROLE_PRODUIT_CREATE")
+     */
+    public function uploadPhoto(Request $request, Produit $produit, \Symfony\Component\DependencyInjection\ContainerInterface $container): Produit {
+        $em = $this->getDoctrine()->getManager();
+        $fullPath = Utils::$serveurUrl . ProduitController::$photoDirectory . '/';
+        //manage new file upload
+        $files = NULL;
+        if ($request->files->get('files')) {
+            $files = $request->files->get('files');
+        }
+        if ($files) {
+            foreach ($files as $file) {
+                $fileName = time() . '.' . $file->guessExtension();
+                // moves the file to the directory where brochures are stored
+                $file->move(
+                        $container->getParameter('produit_photo_directory'), $fileName
+                );
+                $photo = new \App\Entity\Photo();
+                $photo->setNom($fileName);
+                $photo->setProduit($produit);
+                $photo->setUrl($fullPath . $fileName);
+                $em->persist($photo);
+            }
+        }
+        $em->flush();
         return $produit;
     }
 

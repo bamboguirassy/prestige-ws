@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -126,14 +128,19 @@ class Vente
     private $agentVente;
 
     /**
-     * @var \User
+     * @var \Client
      *
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="client", referencedColumnName="id")
      * })
      */
     private $client;
+
+
+    public function __construct()
+    {
+    }
 
     public function getId()
     {
@@ -319,6 +326,5 @@ class Vente
 
         return $this;
     }
-
 
 }

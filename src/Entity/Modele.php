@@ -40,9 +40,16 @@ class Modele
     /**
      * @var string|null
      *
-     * @ORM\Column(name="photo", type="string", length=45, nullable=true)
+     * @ORM\Column(name="photo", type="string", length=255, nullable=true)
      */
     private $photo;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="photo_url", type="string", length=45, nullable=false)
+     */
+    private $photoUrl;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Fonctionnalite", inversedBy="modeles")
@@ -138,6 +145,18 @@ class Modele
     public function setDeploye($deploye): self
     {
         $this->deploye = $deploye;
+
+        return $this;
+    }
+
+    public function getPhotoUrl()
+    {
+        return $this->photoUrl;
+    }
+
+    public function setPhotoUrl(string $photoUrl): self
+    {
+        $this->photoUrl = $photoUrl;
 
         return $this;
     }

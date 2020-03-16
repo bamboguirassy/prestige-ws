@@ -17,6 +17,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
  */
 class CategorieProduitController extends AbstractController
 {
+    public static $photoDirectory = '/uploads/categorieproduits';
+    
     /**
      * @Rest\Get(path="/categorie-produit/", name="categorie_produit_index")
      * @Rest\View(StatusCode = 200)
@@ -25,7 +27,7 @@ class CategorieProduitController extends AbstractController
     {
         $categorieProduits = $this->getDoctrine()
             ->getRepository(CategorieProduit::class)
-            ->finByType('produit');
+            ->finByType('produit',['nom'=>'asc']);
 
         return count($categorieProduits)?$categorieProduits:[];
     }
@@ -38,7 +40,7 @@ class CategorieProduitController extends AbstractController
     {
         $categorieProduits = $this->getDoctrine()
             ->getRepository(CategorieProduit::class)
-            ->finByType('service');
+            ->finByType('service',['nom'=>'asc']);
 
         return count($categorieProduits)?$categorieProduits:[];
     }
@@ -51,7 +53,7 @@ class CategorieProduitController extends AbstractController
     {
         $categorieProduits = $this->getDoctrine()
             ->getRepository(CategorieProduit::class)
-            ->findBy(['modele'=>$modele,'categorieParent'=>NULL,'type'=>'produit']);
+            ->findBy(['modele'=>$modele,'categorieParent'=>NULL,'type'=>'produit'],['nom'=>'asc']);
 
         return count($categorieProduits)?$categorieProduits:[];
     }
@@ -64,7 +66,7 @@ class CategorieProduitController extends AbstractController
     {
         $categorieProduits = $this->getDoctrine()
             ->getRepository(CategorieProduit::class)
-            ->findBy(['modele'=>$modele,'categorieParent'=>NULL,'type'=>'service']);
+            ->findBy(['modele'=>$modele,'categorieParent'=>NULL,'type'=>'service'],['nom'=>'asc']);
 
         return count($categorieProduits)?$categorieProduits:[];
     }
@@ -77,7 +79,7 @@ class CategorieProduitController extends AbstractController
     {
         $categorieProduits = $this->getDoctrine()
             ->getRepository(CategorieProduit::class)
-            ->findByCategorieParent($categorie);
+            ->findByCategorieParent($categorie,['nom'=>'asc']);
 
         return count($categorieProduits)?$categorieProduits:[];
     }
@@ -97,6 +99,44 @@ class CategorieProduitController extends AbstractController
         $entityManager->flush();
 
         return $categorieProduit;
+    }
+    
+    /**
+     * @Rest\Post(path="/{id}/photo-upload", name="categorieproduit_photo_upload",requirements = {"id"="\d+"})
+     * @Rest\View(StatusCode=200)
+     * @IsGranted("ROLE_CATEGORIEPRODUIT_CREATE")
+     */
+    public function uploadPhoto(Request $request, CategorieProduit $categorie, \Symfony\Component\DependencyInjection\ContainerInterface $container): CategorieProduit {
+        $em = $this->getDoctrine()->getManager();
+        $fullPath = Utils::$serveurUrl . CategorieProduitController::$photoDirectory . '/';
+        //find old photo and delete it if exists
+        $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
+        if ($categorie->getPhoto()) {
+            $path = $container->getParameter('categorieproduit_photo_directory') . $categorie->getPhoto();
+            try {
+                if ($fileSystem->exists($path)) {
+                    $fileSystem->remove($path);
+                }
+            } catch (IOExceptionInterface $exception) {
+                echo "An error occurred while deleting the file at " . $exception->getPath();
+            }
+        }
+        //manage new file upload
+        $file = NULL;
+        if ($request->files->get('file')) {
+            $file = $request->files->get('file');
+        }
+        if ($file) {
+            $fileName = $categorie->getNom() . '.' . $file->guessExtension();
+            // moves the file to the directory where brochures are stored
+            $file->move(
+                    $container->getParameter('categorieproduit_photo_directory'), $fileName
+            );
+            $categorie->setPhoto($fileName);
+            $categorie->setPhotoUrl($fullPath . $fileName);
+            $em->flush();
+        }
+        return $categorie;
     }
 
     /**

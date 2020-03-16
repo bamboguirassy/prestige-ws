@@ -21,7 +21,6 @@ class ProduitType extends AbstractType
             ->add('description')
             ->add('type')
             ->add('entreprise')
-            ->add('categories')
         ;
     }
 
