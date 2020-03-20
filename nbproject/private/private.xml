@@ -3,17 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Entity/CategorieProduit.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/templates/categorieproduit/categorieproduit-list/categorieproduit-list.component.html</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Form/CaracteristiqueCategorieType.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Entity/CaracteristiqueCategorie.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Form/GroupType.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Entity/ValeurCaracteristique.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/templates/categorieproduit/categorieproduit.routes.ts</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Form/CategorieProduitType.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Controller/GroupController.php</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/templates/categorieproduit/categorieproduit.ts</file>
-            <file>file:/C:/wamp64/www/firo/firo-ws/src/Controller/CategorieProduitController.php</file>
+            <file>file:/C:/wamp64/www/firo/firo-ws/src/Controller/ProduitController.php</file>
         </group>
     </open-files>
 </project-private>

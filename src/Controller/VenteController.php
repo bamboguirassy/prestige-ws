@@ -26,7 +26,7 @@ class VenteController extends AbstractController {
         $ventes = $this->getDoctrine()
                 ->getRepository(Vente::class)
                 ->findBy(['entreprise' => $this->getUser()->getEntreprise(),
-            'type' => 'vente'],['date'=>'desc']);
+            'type' => 'vente'], ['date' => 'desc']);
 
         return count($ventes) ? $ventes : [];
     }
@@ -40,9 +40,24 @@ class VenteController extends AbstractController {
         $ventes = $this->getDoctrine()
                 ->getRepository(Vente::class)
                 ->findBy(['entreprise' => $this->getUser()->getEntreprise(),
-            'type' => 'commande'],['date'=>'desc']);
+            'type' => 'commande'], ['date' => 'desc']);
 
         return count($ventes) ? $ventes : [];
+    }
+
+    /**
+     * @Rest\Get(path="/service/", name="service_index")
+     * @Rest\View(StatusCode = 200)
+     * @IsGranted("ROLE_SERVICEDEMANDE_SHOW")
+     */
+    public function findServices(): array {
+        $services = $this->getDoctrine()
+                ->getRepository(Vente::class)
+                ->findBy([
+            'entreprise' => $this->getUser()->getEntreprise(),
+            'type' => 'service'], ['date' => 'desc']);
+
+        return count($services) ? $services : [];
     }
 
     /**
@@ -57,7 +72,14 @@ class VenteController extends AbstractController {
         $form = $this->createForm(VenteType::class, $vente);
         $form->submit(Utils::serializeRequestContent($request));
         //generate random
-        $numeroVente = random_int(1000000000000000, 9999999999999999);
+        if ($vente->getType() == 'vente') {
+            $numeroVente = 'V-' . $this->getUser()->getId() . '-' . time();
+        } else if ($vente->getType() == 'commande') {
+            $numeroVente = 'C-' . $this->getUser()->getId() . '-' . time();
+        } else {
+            throw $this->createNotFoundException("Type inconnu, vente ou commande attentdue...");
+        }
+
         $vente->setNumeroVente($numeroVente);
         $vente->setEntreprise($this->getUser()->getEntreprise());
         $vente->setDate(new \DateTime());
@@ -118,6 +140,95 @@ class VenteController extends AbstractController {
     }
 
     /**
+     * @Rest\Post(Path="/create/service/", name="service_vente_new")
+     * @Rest\View(StatusCode=200)
+     * @IsGranted("ROLE_SERVICEDEMANDE_CREATE")
+     */
+    public function createService(Request $request): Vente {
+        $serviceData = json_decode($request->getContent());
+        $entityManager = $this->getDoctrine()->getManager();
+        $vente = new Vente();
+        $form = $this->createForm(VenteType::class, $vente);
+        $form->submit(Utils::serializeRequestContent($request));
+        //generate random
+        $numeroVente = 'S-' . $this->getUser()->getId() . '-' . time();
+        $vente->setNumeroVente($numeroVente);
+        $vente->setEntreprise($this->getUser()->getEntreprise());
+        $vente->setDate(new \DateTime());
+        $vente->setAgentVente($this->getUser());
+        $vente->setType('service');
+        //persist
+        $entityManager->persist($vente);
+        //manage produit lines
+        $produits = $serviceData->produits;
+        foreach ($produits as $produitLine) {
+            $produit = new \App\Entity\Produit();
+            $formProd = $this->createForm(\App\Form\ProduitType::class, $produit);
+            $formProd->submit((array) $produitLine);
+            //get selected categorie
+            $categorie = $entityManager->getRepository(\App\Entity\CategorieProduit::class)
+                    ->find($produitLine->categorie);
+            $produit->setNom($vente->getClient()->getPrenom() . '-' . $vente->getClient()->getNom() . '-' . $categorie->getNom() . '-' . $numeroVente);
+            $produit->setVente($vente);
+            $produit->setType('service');
+            $produit->setEntreprise($this->getUser()->getEntreprise());
+            $entityManager->persist($produit);
+            //define caracteristics for product
+            $caracteristiqueAndValeurs = (array) $produitLine->caracteristiqueAndValeurs;
+            foreach ($caracteristiqueAndValeurs as $caracteristiqueAndValeur) {
+                $caracteristique = $entityManager->getRepository(\App\Entity\CaracteristiqueCategorie::class)
+                        ->find($caracteristiqueAndValeur->id);
+                $caracteristiqueProduit = new \App\Entity\CaracteristiqueProduit();
+                $caracteristiqueProduit->setProduit($produit);
+                $caracteristiqueProduit->setCaracteristiqueCategorie($caracteristique);
+                if (isset($caracteristiqueAndValeur->valeur)) {
+                    $valeurCaracteristique = (string) $caracteristiqueAndValeur->valeur;
+                    $caracteristiqueProduit->setValeur($valeurCaracteristique);
+                    $entityManager->persist($caracteristiqueProduit);
+                }
+            }
+        }
+        //manage reglement
+        $reglements = $serviceData->reglements;
+        foreach ($reglements as $reglementLine) {
+            $reglement = new \App\Entity\Reglement();
+            $formReg = $this->createForm(\App\Form\ReglementType::class, $reglement);
+            $formReg->submit((array) $reglementLine);
+            if ($reglement->getMontant() > 0 || $reglement->getMontantRestant() < 0 || isset($serviceData->avoirs)) {
+                $reglement->setVente($vente);
+                $reglement->setDate(new \DateTime());
+                $entityManager->persist($reglement);
+                // check for avoir
+                if ($reglement->getMontantRestant() < 0) {
+                    $avoir = new \App\Entity\Avoir();
+                    $avoir->setDate(new \DateTime());
+                    $avoir->setMontant(abs($reglement->getMontantRestant()));
+                    $avoir->setReglementSource($reglement);
+                    $avoir->setUtilise(false);
+                    $entityManager->persist($avoir);
+                }
+            }
+        }
+
+        //check for selected avoirs
+        if (isset($serviceData->avoirs)) {
+            $selectedAvoirs = $serviceData->avoirs;
+            foreach ($selectedAvoirs as $selectedAvoir) {
+                $avoir = $entityManager->getRepository(\App\Entity\Avoir::class)
+                        ->find($selectedAvoir->id);
+                $form = $this->createForm(\App\Form\AvoirType::class, $avoir);
+                $form->submit((array) $selectedAvoir);
+                $avoir->setReglementDestination($reglement);
+                $avoir->setUtilise(true);
+            }
+        }
+
+        $entityManager->flush();
+
+        return $vente;
+    }
+
+    /**
      * @Rest\Get(path="/{id}", name="vente_show",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_VENTE_SHOW")
@@ -135,9 +246,9 @@ class VenteController extends AbstractController {
         $etatLivraison = $vente->getLivree();
         $form = $this->createForm(VenteType::class, $vente);
         $form->submit(Utils::serializeRequestContent($request));
-        if($vente->getLivree() && !$etatLivraison){
+        if ($vente->getLivree() && !$etatLivraison) {
             $vente->setDateLivraison(new \DateTime());
-        } else if($etatLivraison && !$vente->getLivree()) {
+        } else if ($etatLivraison && !$vente->getLivree()) {
             $vente->setDateLivraison(null);
         }
 

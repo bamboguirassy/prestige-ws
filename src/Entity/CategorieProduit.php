@@ -77,11 +77,6 @@ class CategorieProduit
     private $sousCategories;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CaracteristiqueCategorie", mappedBy="categorie", orphanRemoval=true)
-     */
-    private $caracteristiques;
-
-    /**
      * @ORM\Column(type="string", length=15, name="type")
      */
     private $type;
@@ -90,7 +85,6 @@ class CategorieProduit
     public function __construct()
     {
         $this->categorieProduits = new ArrayCollection();
-        $this->caracteristiques = new ArrayCollection();
     }
 
     public function getId()
@@ -166,37 +160,6 @@ class CategorieProduit
     public function setSousCategories($sousCategories): self
     {
         $this->sousCategories = $sousCategories;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|CaracteristiqueCategorie[]
-     */
-    public function getCaracteristiques(): Collection
-    {
-        return $this->caracteristiques;
-    }
-
-    public function addCaracteristique(CaracteristiqueCategorie $caracteristique): self
-    {
-        if (!$this->caracteristiques->contains($caracteristique)) {
-            $this->caracteristiques[] = $caracteristique;
-            $caracteristique->setCategorieProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCaracteristique(CaracteristiqueCategorie $caracteristique): self
-    {
-        if ($this->caracteristiques->contains($caracteristique)) {
-            $this->caracteristiques->removeElement($caracteristique);
-            // set the owning side to null (unless already changed)
-            if ($caracteristique->getCategorieProduit() === $this) {
-                $caracteristique->setCategorieProduit(null);
-            }
-        }
 
         return $this;
     }

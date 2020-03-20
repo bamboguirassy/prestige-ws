@@ -59,6 +59,19 @@ class CategorieProduitController extends AbstractController
     }
     
     /**
+     * @Rest\Get(path="/cmp/{id}/modele", name="categorie_produit_by_matierepremiere")
+     * @Rest\View(StatusCode = 200)
+     */
+    public function findCMPByModele(\App\Entity\Modele $modele): array
+    {
+        $categorieProduits = $this->getDoctrine()
+            ->getRepository(CategorieProduit::class)
+            ->findBy(['modele'=>$modele,'categorieParent'=>NULL,'type'=>'matierepremiere'],['nom'=>'asc']);
+
+        return count($categorieProduits)?$categorieProduits:[];
+    }
+    
+    /**
      * @Rest\Get(path="/cs/{id}/modele", name="categorie_service_by_modele")
      * @Rest\View(StatusCode = 200)
      */

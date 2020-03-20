@@ -15,19 +15,33 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * @Route("/api/fonctionnalite")
  */
-class FonctionnaliteController extends AbstractController
-{
+class FonctionnaliteController extends AbstractController {
+
     /**
      * @Rest\Get(path="/", name="fonctionnalite_index")
      * @Rest\View(StatusCode = 200)
      */
-    public function index(): array
-    {
+    public function index(): array {
         $fonctionnalites = $this->getDoctrine()
-            ->getRepository(Fonctionnalite::class)
-            ->findAll();
+                ->getRepository(Fonctionnalite::class)
+                ->findAll();
 
-        return count($fonctionnalites)?$fonctionnalites:[];
+        return count($fonctionnalites) ? $fonctionnalites : [];
+    }
+
+    /**
+     * @Rest\Get(path="/{id}/modele", name="fonctionnalite_modele_index")
+     * @Rest\View(StatusCode = 200)
+     */
+    public function findByModele(\App\Entity\Modele $modele): array {
+        $em = $this->getDoctrine()->getManager();
+        $fonctionnalites = $em->createQuery('select f from App\Entity\Fonctionnalite f, '
+                        . 'App\Entity\FonctionnaliteModele fm where '
+                        . 'fm.fonctionnalite=f and fm.modele=?1')
+                ->setParameter(1, $modele)
+                ->getResult();
+
+        return count($fonctionnalites) ? $fonctionnalites : [];
     }
 
     /**
@@ -35,7 +49,7 @@ class FonctionnaliteController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_FONCTIONNALITE_CREATE")
      */
-    public function create(Request $request): Fonctionnalite    {
+    public function create(Request $request): Fonctionnalite {
         $fonctionnalite = new Fonctionnalite();
         $form = $this->createForm(FonctionnaliteType::class, $fonctionnalite);
         $form->submit(Utils::serializeRequestContent($request));
@@ -52,17 +66,16 @@ class FonctionnaliteController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_FONCTIONNALITE_SHOW")
      */
-    public function show(Fonctionnalite $fonctionnalite): Fonctionnalite    {
+    public function show(Fonctionnalite $fonctionnalite): Fonctionnalite {
         return $fonctionnalite;
     }
 
-    
     /**
      * @Rest\Put(path="/{id}/edit", name="fonctionnalite_edit",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_FONCTIONNALITE_EDIT")
      */
-    public function edit(Request $request, Fonctionnalite $fonctionnalite): Fonctionnalite    {
+    public function edit(Request $request, Fonctionnalite $fonctionnalite): Fonctionnalite {
         $form = $this->createForm(FonctionnaliteType::class, $fonctionnalite);
         $form->submit(Utils::serializeRequestContent($request));
 
@@ -76,14 +89,14 @@ class FonctionnaliteController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_FONCTIONNALITE_DELETE")
      */
-    public function delete(Fonctionnalite $fonctionnalite): Fonctionnalite    {
+    public function delete(Fonctionnalite $fonctionnalite): Fonctionnalite {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($fonctionnalite);
         $entityManager->flush();
 
         return $fonctionnalite;
     }
-    
+
     /**
      * @Rest\Post("/delete-selection/", name="fonctionnalite_selection_delete")
      * @Rest\View(StatusCode=200)
@@ -103,4 +116,5 @@ class FonctionnaliteController extends AbstractController
 
         return $fonctionnalites;
     }
+
 }

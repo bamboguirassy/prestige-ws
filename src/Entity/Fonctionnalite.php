@@ -44,18 +44,8 @@ class Fonctionnalite
      */
     private $description;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Modele", mappedBy="fonctionnalites")
-     * @ORM\JoinTable(name="fonctionnalite_modele",
-     *      joinColumns={@ORM\JoinColumn(name="fonctionnalite", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="modele", referencedColumnName="id")}
-     * )
-     */
-    private $modeles;
-
     public function __construct()
     {
-        $this->modeles = new ArrayCollection();
     }
 
     public function getId()
@@ -98,34 +88,5 @@ class Fonctionnalite
 
         return $this;
     }
-
-    /**
-     * @return Collection|Modele[]
-     */
-    public function getModeles(): Collection
-    {
-        return $this->modeles;
-    }
-
-    public function addModele(Modele $modele): self
-    {
-        if (!$this->modeles->contains($modele)) {
-            $this->modeles[] = $modele;
-            $modele->addFonctionnalite($this);
-        }
-
-        return $this;
-    }
-
-    public function removeModele(Modele $modele): self
-    {
-        if ($this->modeles->contains($modele)) {
-            $this->modeles->removeElement($modele);
-            $modele->removeFonctionnalite($this);
-        }
-
-        return $this;
-    }
-
 
 }

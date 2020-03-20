@@ -1,0 +1,68 @@
+<div class="card" *ngIf="resourceName|editable">
+    <h1 class="mb-0">Formulaire de Modification - Fournisseur</h1>
+    <hr class="mb-0">
+    <form (ngSubmit)="updateItem()" #fournisseurForm="ngForm">
+        <div class="card-body">
+            <div class="row">
+                                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input [(ngModel)]="item.nom" type="text" name="nom" id="nom" class="form-control"
+                                    placeholder="" aria-describedby="helpNomId">
+                        <small id="helpNomId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="telephone">Telephone</label>
+                        <input [(ngModel)]="item.telephone" type="text" name="telephone" id="telephone" class="form-control"
+                                    placeholder="" aria-describedby="helpTelephoneId">
+                        <small id="helpTelephoneId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="adresse">Adresse</label>
+                        <input [(ngModel)]="item.adresse" type="text" name="adresse" id="adresse" class="form-control"
+                                    placeholder="" aria-describedby="helpAdresseId">
+                        <small id="helpAdresseId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input [(ngModel)]="item.description" type="text" name="description" id="description" class="form-control"
+                                    placeholder="" aria-describedby="helpDescriptionId">
+                        <small id="helpDescriptionId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="logo">Logo</label>
+                        <input [(ngModel)]="item.logo" type="text" name="logo" id="logo" class="form-control"
+                                    placeholder="" aria-describedby="helpLogoId">
+                        <small id="helpLogoId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                                        <div class="col-lg-6">
+                    <div class="form-group">
+                        <label for="logoUrl">LogoUrl</label>
+                        <input [(ngModel)]="item.logoUrl" type="text" name="logoUrl" id="logoUrl" class="form-control"
+                                    placeholder="" aria-describedby="helpLogoUrlId">
+                        <small id="helpLogoUrlId" class="text-muted">Ex: </small>
+                    </div>
+                </div>
+                                                </div>
+        </div>
+        <div class="card-footer">
+            <button icon="pi pi-times" pButton [disabled]="isSubmitted" label="Fermer" (click)="close()" type="button"
+                class="ui-button-raised ui-button-rounded ui-button-secondary mt-1"></button>
+            <button [disabled]="isSubmitted" pButton type="reset" label="Vider"
+                icon="pi pi-refresh" class="ui-button-info mt-1 ml-1"></button>
+            <button *ngIf="resourceName|editable" icon="pi pi-pencil" pButton [disabled]="isSubmitted || fournisseurForm.invalid || isOffline" type="submit"
+                class="float-md-right ml-1 mt-1" label="Mettre à jour">
+                <i *ngIf="isSubmitted" class="pi pi-spin pi-spinner ml-1" style="font-weight: bold;"></i>
+            </button>
+        </div>
+    </form>
+</div>

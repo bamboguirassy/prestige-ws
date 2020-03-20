@@ -104,18 +104,12 @@ class Entreprise
     private $modele;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="entreprise")
-     */
-    private $users;
-
-    /**
      * @ORM\Column(type="string", length=145, nullable=true)
      */
     private $logo;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
     }
 
     public function getId()
@@ -251,37 +245,6 @@ class Entreprise
     public function setModele($modele): self
     {
         $this->modele = $modele;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setEntreprise($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-            // set the owning side to null (unless already changed)
-            if ($user->getEntreprise() === $this) {
-                $user->setEntreprise(null);
-            }
-        }
 
         return $this;
     }

@@ -198,15 +198,19 @@ class GroupController extends AbstractController {
                 new AccessModel('MOYENPAIEMENT', "Moyens de paiement")
                     ]
             ),
-            New AccessGroup("Gestion Vente & Commande", [
+            New AccessGroup("Stock & Approvisionnement", [
+                new AccessModel('FOURNISSEUR', 'Fournisseur'),
+                new AccessModel('APPROVISIONNEMENT', 'Approvisionnement'),
                 new AccessModel('PRODUIT', 'Produit'),
-                new AccessModel('CLIENT', 'Client'),
+                    ]),
+            New AccessGroup("Gestion Vente & Commande", [
                 new AccessModel('VENTE', "Vente"),
                 new AccessModel('COMMANDE', "Commande"),
                 new AccessModel('SERVICEDEMANDE', "Service à la demande"),
+                new AccessModel('CLIENT', "Client"),
                 new AccessModel('REGLEMENT', "Reglement"),
                 new AccessModel('AVOIR', "Avoir"),
-                    ])
+                    ]),
         ];
         return $accessGroups;
     }

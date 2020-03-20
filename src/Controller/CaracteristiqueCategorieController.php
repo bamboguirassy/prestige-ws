@@ -15,32 +15,50 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 /**
  * @Route("/api/caracteristiquecategorie")
  */
-class CaracteristiqueCategorieController extends AbstractController
-{
+class CaracteristiqueCategorieController extends AbstractController {
+
     /**
      * @Rest\Get(path="/", name="caracteristique_categorie_index")
      * @Rest\View(StatusCode = 200)
      */
-    public function index(): array
-    {
+    public function index(): array {
         $caracteristiqueCategories = $this->getDoctrine()
-            ->getRepository(CaracteristiqueCategorie::class)
-            ->findAll();
+                ->getRepository(CaracteristiqueCategorie::class)
+                ->findAll();
 
-        return count($caracteristiqueCategories)?$caracteristiqueCategories:[];
+        return count($caracteristiqueCategories) ? $caracteristiqueCategories : [];
     }
-    
+
     /**
      * @Rest\Get(path="/{id}/categorie", name="caracteristique_categorie_by_categorie")
      * @Rest\View(StatusCode = 200)
      */
-    public function findByCategorie(\App\Entity\CategorieProduit $categorie): array
-    {
+    public function findByCategorie(\App\Entity\CategorieProduit $categorie): array {
         $caracteristiqueCategories = $this->getDoctrine()
-            ->getRepository(CaracteristiqueCategorie::class)
-            ->findByCategorie($categorie);
+                ->getRepository(CaracteristiqueCategorie::class)
+                ->findByCategorie($categorie);
 
-        return count($caracteristiqueCategories)?$caracteristiqueCategories:[];
+        return count($caracteristiqueCategories) ? $caracteristiqueCategories : [];
+    }
+
+    /**
+     * @Rest\Get(path="/{id}/categorie/parent", name="caracteristique_categorie_by_categorie_and_parent")
+     * @Rest\View(StatusCode = 200)
+     */
+    public function findByCategorieAndParent(\App\Entity\CategorieProduit $categorie): array {
+
+        $caracteristiqueCategories = $this->getDoctrine()
+                ->getRepository(CaracteristiqueCategorie::class)
+                ->findByCategorie($categorie);
+        while ($categorie->getCategorieParent()) {
+            $categorie = $categorie->getCategorieParent();
+            $parentCaracteristiques = $this->getDoctrine()
+                    ->getRepository(CaracteristiqueCategorie::class)
+                    ->findByCategorie($categorie);
+            $caracteristiqueCategories = array_merge($caracteristiqueCategories, $parentCaracteristiques);
+        }
+
+        return count($caracteristiqueCategories) ? $caracteristiqueCategories : [];
     }
 
     /**
@@ -48,7 +66,7 @@ class CaracteristiqueCategorieController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_CARACTERISTIQUECATEGORIE_CREATE")
      */
-    public function create(Request $request): CaracteristiqueCategorie    {
+    public function create(Request $request): CaracteristiqueCategorie {
         $caracteristiqueCategorie = new CaracteristiqueCategorie();
         $form = $this->createForm(CaracteristiqueCategorieType::class, $caracteristiqueCategorie);
         $form->submit(Utils::serializeRequestContent($request));
@@ -65,17 +83,16 @@ class CaracteristiqueCategorieController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_CARACTERISTIQUECATEGORIE_SHOW")
      */
-    public function show(CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie    {
+    public function show(CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie {
         return $caracteristiqueCategorie;
     }
 
-    
     /**
      * @Rest\Put(path="/{id}/edit", name="caracteristique_categorie_edit",requirements = {"id"="\d+"})
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_CARACTERISTIQUECATEGORIE_EDIT")
      */
-    public function edit(Request $request, CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie    {
+    public function edit(Request $request, CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie {
         $form = $this->createForm(CaracteristiqueCategorieType::class, $caracteristiqueCategorie);
         $form->submit(Utils::serializeRequestContent($request));
 
@@ -89,14 +106,14 @@ class CaracteristiqueCategorieController extends AbstractController
      * @Rest\View(StatusCode=200)
      * @IsGranted("ROLE_CARACTERISTIQUECATEGORIE_DELETE")
      */
-    public function delete(CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie    {
+    public function delete(CaracteristiqueCategorie $caracteristiqueCategorie): CaracteristiqueCategorie {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($caracteristiqueCategorie);
         $entityManager->flush();
 
         return $caracteristiqueCategorie;
     }
-    
+
     /**
      * @Rest\Post("/delete-selection/", name="caracteristique_categorie_selection_delete")
      * @Rest\View(StatusCode=200)
@@ -116,4 +133,5 @@ class CaracteristiqueCategorieController extends AbstractController
 
         return $caracteristiqueCategories;
     }
+
 }

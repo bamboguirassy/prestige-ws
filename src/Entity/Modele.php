@@ -52,22 +52,12 @@ class Modele
     private $photoUrl;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Fonctionnalite", inversedBy="modeles")
-     * @ORM\JoinTable(name="fonctionnalite_modele",
-     *      joinColumns={@ORM\JoinColumn(name="modele", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="fonctionnalite", referencedColumnName="id")}
-     * )
-     */
-    private $fonctionnalites;
-
-    /**
      * @ORM\Column(name="deploye", type="boolean", nullable=true)
      */
     private $deploye;
 
     public function __construct()
     {
-        $this->fonctionnalites = new ArrayCollection();
     }
 
     public function getId()
@@ -107,32 +97,6 @@ class Modele
     public function setPhoto($photo): self
     {
         $this->photo = $photo;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Fonctionnalite[]
-     */
-    public function getFonctionnalites(): Collection
-    {
-        return $this->fonctionnalites;
-    }
-
-    public function addFonctionnalite(Fonctionnalite $fonctionnalite): self
-    {
-        if (!$this->fonctionnalites->contains($fonctionnalite)) {
-            $this->fonctionnalites[] = $fonctionnalite;
-        }
-
-        return $this;
-    }
-
-    public function removeFonctionnalite(Fonctionnalite $fonctionnalite): self
-    {
-        if ($this->fonctionnalites->contains($fonctionnalite)) {
-            $this->fonctionnalites->removeElement($fonctionnalite);
-        }
 
         return $this;
     }

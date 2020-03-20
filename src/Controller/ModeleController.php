@@ -42,6 +42,18 @@ class ModeleController extends AbstractController {
         $form->submit(Utils::serializeRequestContent($request));
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($modele);
+
+        //set fonctionnalities
+        $modeleData = json_decode($request->getContent());
+        $fonctionnaliteIds = (array) $modeleData->fonctionnalites;
+        foreach ($fonctionnaliteIds as $fonctionnaliteId) {
+            $fonctionnalite = $entityManager->getRepository(\App\Entity\Fonctionnalite::class)
+                    ->find($fonctionnaliteId);
+            $fonctionnaliteModele = new \App\Entity\FonctionnaliteModele();
+            $fonctionnaliteModele->setFonctionnalite($fonctionnalite);
+            $fonctionnaliteModele->setModele($modele);
+            $entityManager->persist($fonctionnaliteModele);
+        }
         $entityManager->flush();
 
         return $modele;
@@ -64,8 +76,28 @@ class ModeleController extends AbstractController {
     public function edit(Request $request, Modele $modele): Modele {
         $form = $this->createForm(ModeleType::class, $modele);
         $form->submit(Utils::serializeRequestContent($request));
+        $entityManager = $this->getDoctrine()->getManager();
 
-        $this->getDoctrine()->getManager()->flush();
+        //find and remove existing fonctionnalités
+        $fonctionnaliteModeles = $entityManager->getRepository(\App\Entity\FonctionnaliteModele::class)
+                ->findByModele($modele);
+        foreach ($fonctionnaliteModeles as $fonctionnalite) {
+            $entityManager->remove($fonctionnalite);
+        }
+        $entityManager->flush();
+        //set fonctionnalities
+        $modeleData = json_decode($request->getContent());
+        $fonctionnaliteIds = (array) $modeleData->fonctionnalites;
+        foreach ($fonctionnaliteIds as $fonctionnaliteId) {
+            $fonctionnalite = $entityManager->getRepository(\App\Entity\Fonctionnalite::class)
+                    ->find($fonctionnaliteId);
+            $fonctionnaliteModele = new \App\Entity\FonctionnaliteModele();
+            $fonctionnaliteModele->setFonctionnalite($fonctionnalite);
+            $fonctionnaliteModele->setModele($modele);
+            $entityManager->persist($fonctionnaliteModele);
+        }
+
+        $entityManager->flush();
 
         return $modele;
     }
@@ -116,10 +148,17 @@ class ModeleController extends AbstractController {
     public function delete(Modele $modele, \Symfony\Component\DependencyInjection\ContainerInterface $container): Modele {
         $entityManager = $this->getDoctrine()->getManager();
 
+        //find and remove existing fonctionnalités
+        $fonctionnaliteModeles = $entityManager->getRepository(\App\Entity\FonctionnaliteModele::class)
+                ->findByModele($modele);
+        foreach ($fonctionnaliteModeles as $fonctionnalite) {
+            $entityManager->remove($fonctionnalite);
+        }
+
         //find old photo and delete it if exists
         $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
         if ($modele->getPhoto()) {
-            $path = $container->getParameter('modele_photo_directory').'/'. $modele->getPhoto();
+            $path = $container->getParameter('modele_photo_directory') . '/' . $modele->getPhoto();
             try {
                 if ($fileSystem->exists($path)) {
                     $fileSystem->remove($path);
@@ -149,6 +188,12 @@ class ModeleController extends AbstractController {
         $fileSystem = new \Symfony\Component\Filesystem\Filesystem();
         foreach ($modeles as $modele) {
             $modele = $entityManager->getRepository(Modele::class)->find($modele->id);
+            //find and remove existing fonctionnalités
+            $fonctionnaliteModeles = $entityManager->getRepository(\App\Entity\FonctionnaliteModele::class)
+                    ->findByModele($modele);
+            foreach ($fonctionnaliteModeles as $fonctionnalite) {
+                $entityManager->remove($fonctionnalite);
+            }
             //find old photo and delete it if exists
             if ($modele->getPhoto()) {
                 $path = $container->getParameter('modele_photo_directory') . $modele->getPhoto();

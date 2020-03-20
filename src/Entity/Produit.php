@@ -89,6 +89,14 @@ class Produit
      */
     private $entreprise;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Vente")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="vente", referencedColumnName="id")
+     * })
+     */
+    private $vente;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -203,6 +211,18 @@ class Produit
     public function setEntreprise($entreprise): self
     {
         $this->entreprise = $entreprise;
+
+        return $this;
+    }
+
+    public function getVente()
+    {
+        return $this->vente;
+    }
+
+    public function setVente($vente): self
+    {
+        $this->vente = $vente;
 
         return $this;
     }

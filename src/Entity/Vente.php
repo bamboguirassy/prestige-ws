@@ -103,7 +103,7 @@ class Vente
     /**
      * @var string
      *
-     * @ORM\Column(name="numero_vente", type="string", length=16, nullable=false)
+     * @ORM\Column(name="numero_vente", type="string", length=18, nullable=false)
      */
     private $numeroVente;
 
@@ -136,6 +136,14 @@ class Vente
      * })
      */
     private $client;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Fournisseur")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="fournisseur", referencedColumnName="id")
+     * })
+     */
+    private $fournisseur;
 
 
     public function __construct()
@@ -323,6 +331,18 @@ class Vente
     public function setClient($client): self
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getFournisseur()
+    {
+        return $this->fournisseur;
+    }
+
+    public function setFournisseur($fournisseur): self
+    {
+        $this->fournisseur = $fournisseur;
 
         return $this;
     }

@@ -54,7 +54,7 @@ class ClientController extends AbstractController {
 
     /**
      * @Rest\Get(path="/search/{tel}", name="client_search")
-     * @IsGranted("ROLE_CLIENT_SHOW")
+     * @IsGranted("ROLE_CLIENT_INDEX")
      * @Rest\View(StatusCode = 200)
      */
     public function searchClient($tel): array {

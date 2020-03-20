@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Utils\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/produit")
@@ -36,6 +37,40 @@ class ProduitController extends AbstractController {
                     array('entreprise' => $this->getUser()->getEntreprise(),
                         'type' => 'produit'));
         }
+
+        return count($produits) ? $produits : [];
+    }
+    
+    /**
+     * @Rest\Get(path="/matierepremiere/", name="matierepremiere_index")
+     * @Rest\View(StatusCode = 200)
+     * @IsGranted("ROLE_PRODUIT_INDEX")
+     */
+    public function findMatierePremiere(): array {
+        if (UserController::isSuperAdmin($this)) {
+            $produits = $this->getDoctrine()
+                    ->getRepository(Produit::class)
+                    ->findByType('matierepremiere');
+        } else {
+            $produits = $this->getDoctrine()
+                    ->getRepository(Produit::class)
+                    ->findBy(
+                    array('entreprise' => $this->getUser()->getEntreprise(),
+                        'type' => 'matierepremiere'));
+        }
+
+        return count($produits) ? $produits : [];
+    }
+
+    /**
+     * @Rest\Get(path="/{id}/service", name="produit_service_index",requirements = {"id"="\d+"})
+     * @Rest\View(StatusCode = 200)
+     * @IsGranted("ROLE_SERVICEDEMANDE_SHOW")
+     */
+    public function findServiceProduct(\App\Entity\Vente $service): array {
+        $produits = $this->getDoctrine()
+                ->getRepository(Produit::class)
+                ->findBy(['type' => 'service', 'vente' => $service]);
 
         return count($produits) ? $produits : [];
     }
@@ -68,22 +103,9 @@ class ProduitController extends AbstractController {
     }
 
     /**
-     * @Rest\Get(path="/service/{id}/modele", name="service_by_modele")
-     * @Rest\View(StatusCode = 200)
-     * @IsGranted("ROLE_PRODUIT_INDEX")
-     */
-    public function findServiceByModele(\App\Entity\Modele $modele): array {
-        $produits = $this->getDoctrine()
-                ->getRepository(Produit::class)
-                ->findByModele($modele);
-
-        return count($produits) ? $produits : [];
-    }
-
-    /**
      * @Rest\Post(Path="/create", name="produit_new")
      * @Rest\View(StatusCode=200)
-     * @IsGranted("ROLE_PRODUIT_CREATE")
+     * @Security("is_granted('ROLE_PRODUIT_CREATE')")
      */
     public function create(Request $request): Produit {
         $produit = new Produit();
